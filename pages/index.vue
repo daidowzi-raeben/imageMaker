@@ -3,13 +3,13 @@
     <div v-if="IS_LOADING" style="position:fixed;width:100%;height:100%;top:0;left:0;background:#000; opacity: 0.5;"></div>
     <div style="height:500px">
     <div v-for="(v,i) in CHAT.LIST" :key="i" style="margin-bottom:20px;">
-    {{ v?.data?.choices[0]?.message?.content }}
+    <p v-html="v?.data?.choices[0]?.message?.content"></p>
     </div>
   </div>
   
     <!-- 이름 : <input type="text" v-model="user"  style="border:1px solid #000; padding:10px;"/><br> -->
-    내용 : <input type="text" v-model="chatTxt" @change="onChangeIsLoad"  @keypress.enter="onClickChat" style="border:1px solid #000; padding:10px;"/>
-    <el-button type="primary" @click="onClickChat">Primary</el-button>
+    내용 : <input type="text" v-model="chatTxt" :disabled="IS_LOADING" @change="onChangeIsLoad"  @keypress.enter="onClickChat" style="border:1px solid #000; padding:10px;"/>
+    <el-button type="primary" :disabled="IS_LOADING" @click="onClickChat">Primary</el-button>
   </div>
 </template>
 
@@ -68,10 +68,10 @@ export default {
           role: "system",
           content: this.chatTxt
         },
-        // {
-        //   role: "user",
-        //   content: this.user
-        // }
+        {
+          role: "user",
+          content: this.user
+        }
       ]
       list.forEach((v,i) => {
         params.messages.push(v?.data?.choices[0]?.message)

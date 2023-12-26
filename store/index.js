@@ -49,6 +49,7 @@ const createStore = () => {
       CHAT: {
         LIST: [],
       },
+      IMAGE: {},
     },
     getters: {},
     mutations: {
@@ -60,6 +61,9 @@ const createStore = () => {
       },
       MUTATIONS_IS_LOADING(state, payload) {
         state.IS_LOADING = payload
+      },
+      MUTATIONS_IMAGE_LIST(state, payload) {
+        state.IMAGE = payload
       },
     },
     actions: {
@@ -75,6 +79,42 @@ const createStore = () => {
             // res.params = params
             commit('MUTATIONS_CHAT_LIST', res)
             commit('MUTATIONS_IS_LOADING', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_IMAGE_BOT({ commit }, params) {
+        this.$axios
+          .post(`https://api.openai.com/v1/images/generations`, params, {
+            header: {
+              'Context-Type': 'multipart/form-data',
+            },
+          })
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_IMAGE_LIST', res)
+            commit('MUTATIONS_IS_LOADING', false)
+            this.$axios
+              .get(
+                `${process.env.VUE_APP_API}?mode=aiImage`,
+                { params },
+                {
+                  header: {
+                    'Context-Type': 'multipart/form-data',
+                  },
+                }
+              )
+              .then((res) => {
+                console.log(res.data)
+                // res.params = params
+                // commit('MUTATIONS_CHAT_LIST', res)
+                // commit('MUTATIONS_IS_LOADING', false)
+              })
+              .catch((res) => {
+                console.log('AXIOS FALSE', res)
+              })
           })
           .catch((res) => {
             console.log('AXIOS FALSE', res)
