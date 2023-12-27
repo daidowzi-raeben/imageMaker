@@ -15,6 +15,10 @@
                 <el-option v-for="item in options.style_preset" :key="item" :label="item" :value="item">
                 </el-option>
             </el-select>
+            <el-select v-model="paramData.hd" placeholder="Select">
+                <el-option v-for="item in options.hd" :key="item" :label="item" :value="item">
+                </el-option>
+            </el-select>
         </div>
         <div>
 
@@ -44,7 +48,7 @@
 
         <div>
             <div v-for="(v,i) in IMAGE" :key="i">
-                <img :src="onLoadImage(v?.image)"/>
+                <img :src="onLoadImage(v?.image)" width="100%"/>
             </div>
         </div>
 
@@ -66,14 +70,15 @@ export default {
         return {
             txtDefault: 'Asian, beautiful face, young, lovely',
             txt: 'A pure looking woman with long brown hair and a white tight short-sleeved shirt',
-            textNot: '',
+            textNot: 'multi arms,multi legs,bad arm anatomy,bad leg anatomy,bad hand anatomy,bad finger anatomy, bad detailed background,unclear architectural outline,non-linear background,lowres, worst quality, low quality, blurry',
             openai: null,
             cfg_scale: 7,
             seed:0,
             steps:30,
             paramData: {
                 sampler: 'DDIM',
-                style_preset: '3d-model'
+                style_preset: '3d-model',
+                hd:'1024x1024'
             },
             options: {
                 sampler: [
@@ -105,6 +110,17 @@ export default {
                     'photographic',
                     'pixel-art',
                     'tile-texture'
+                ],
+                hd: [
+                     "1024x1024",
+                     "1152x896",
+                     "1216x832",
+                     "1344x768",
+                     "1536x640",
+                     "640x1536",
+                     "768x1344",
+                     "832x1216",
+                     "896x1152,",
                 ]
 
             }
@@ -116,7 +132,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['IMAGE', 'IS_LOADING']),
+        ...mapState(['IMAGE','IS_LOADING']),
     },
     created() {
 
@@ -137,6 +153,7 @@ export default {
             const parmas = {
                 sampler : this.paramData.sampler,
                 style_preset: this.paramData.style_preset,
+                hd: this.paramData.hd,
                 text: this.txt,
                 txtDefault: this.txtDefault,
                 cfg_scale: this.cfg_scale,
