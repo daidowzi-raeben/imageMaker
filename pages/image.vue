@@ -30,6 +30,10 @@
             <el-input placeholder="Please input" v-model="seed"></el-input>
         </div>
         <div>
+            <div>steps</div>
+            <el-input placeholder="Please input" v-model="steps"></el-input>
+        </div>
+        <div>
             <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button>
         </div>
 
@@ -60,6 +64,7 @@ export default {
             openai: null,
             cfg_scale: 7,
             seed:0,
+            steps:30,
             paramData: {
                 sampler: 'DDIM',
                 style_preset: '3d-model'
@@ -130,7 +135,8 @@ export default {
                 txtDefault: this.txtDefault,
                 cfg_scale: this.cfg_scale,
                 mode: 'maker',
-                seed: this.seed
+                seed: this.seed,
+                steps: this.steps
                 
             }
             this.ACTION_IMAGE_BOT(parmas)
