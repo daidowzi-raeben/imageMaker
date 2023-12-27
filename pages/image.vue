@@ -22,6 +22,11 @@
             </el-input>
         </div>
         <div>
+
+            <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="제외키워드" v-model="textNot">
+            </el-input>
+        </div>
+        <div>
             <div>내용의 엄격도 0 ~ 35</div>
             <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
         </div>
@@ -61,6 +66,7 @@ export default {
         return {
             txtDefault: 'Asian, beautiful face, young, lovely',
             txt: 'A pure looking woman with long brown hair and a white tight short-sleeved shirt',
+            textNot: '',
             openai: null,
             cfg_scale: 7,
             seed:0,
@@ -136,7 +142,8 @@ export default {
                 cfg_scale: this.cfg_scale,
                 mode: 'maker',
                 seed: this.seed,
-                steps: this.steps
+                steps: this.steps,
+                textNot: this.textNot,
                 
             }
             this.ACTION_IMAGE_BOT(parmas)
