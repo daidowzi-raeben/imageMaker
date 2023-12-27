@@ -161,6 +161,7 @@ export default {
                 seed: this.seed,
                 steps: this.steps,
                 textNot: this.textNot,
+                timestamp: Date.now()
                 
             }
             this.ACTION_IMAGE_BOT(parmas)
