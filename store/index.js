@@ -50,6 +50,7 @@ const createStore = () => {
         LIST: [],
       },
       IMAGE: {},
+      IMAGE_LIST: [],
     },
     getters: {},
     mutations: {
@@ -64,6 +65,9 @@ const createStore = () => {
       },
       MUTATIONS_IMAGE_LIST(state, payload) {
         state.IMAGE = payload
+      },
+      MUTATIONS_IMAGE_LIST_ARRAY(state, payload) {
+        state.IMAGE_LIST = payload
       },
     },
     actions: {
@@ -101,6 +105,25 @@ const createStore = () => {
             // res.params = params
             if (res?.data) {
               commit('MUTATIONS_IMAGE_LIST', res.data)
+              commit('MUTATIONS_IS_LOADING', false)
+            }
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_IMAGE_BOT_LIST({ commit }, params) {
+        return this.$axios
+          .get(`${process.env.VUE_APP_API}?mode=aiList`, params, {
+            header: {
+              'Context-Type': 'multipart/form-data',
+            },
+          })
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            if (res?.data) {
+              commit('MUTATIONS_IMAGE_LIST_ARRAY', res.data)
               commit('MUTATIONS_IS_LOADING', false)
             }
           })
