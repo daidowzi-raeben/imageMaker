@@ -26,6 +26,10 @@
             <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
         </div>
         <div>
+            <div>seed</div>
+            <el-input placeholder="Please input" v-model="seed"></el-input>
+        </div>
+        <div>
             <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button>
         </div>
 
@@ -55,6 +59,7 @@ export default {
             txt: 'A pure looking woman with long brown hair and a white tight short-sleeved shirt',
             openai: null,
             cfg_scale: 7,
+            seed:0,
             paramData: {
                 sampler: 'DDIM',
                 style_preset: '3d-model'
@@ -124,7 +129,8 @@ export default {
                 text: this.txt,
                 txtDefault: this.txtDefault,
                 cfg_scale: this.cfg_scale,
-                mode: 'maker'
+                mode: 'maker',
+                seed: this.seed
                 
             }
             this.ACTION_IMAGE_BOT(parmas)

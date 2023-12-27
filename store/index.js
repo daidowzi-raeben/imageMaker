@@ -92,8 +92,8 @@ const createStore = () => {
         console.log('params', params)
         return this.$axios
           .get(
-            `${process.env.VUE_APP_API}?mode=${params?.mode}&sampler=${params?.sampler}&style_preset=${params?.style_preset}&text=${params?.text}&txtDefault=${params?.txtDefault}&cfg_scale=${params?.cfg_scale}`,
-            params,
+            `${process.env.VUE_APP_API}`,
+            { params },
             {
               header: {
                 'Context-Type': 'multipart/form-data',
