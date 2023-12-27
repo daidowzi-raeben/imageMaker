@@ -85,6 +85,30 @@ const createStore = () => {
           })
       },
       ACTION_IMAGE_BOT({ commit }, params) {
+        console.log('params', params)
+        return this.$axios
+          .get(
+            `${process.env.VUE_APP_API}?mode=${params?.mode}&sampler=${params?.sampler}&style_preset=${params?.style_preset}&text=${params?.text}&txtDefault=${params?.txtDefault}&cfg_scale=${params?.cfg_scale}`,
+            params,
+            {
+              header: {
+                'Context-Type': 'multipart/form-data',
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            if (res?.data) {
+              commit('MUTATIONS_IMAGE_LIST', res.data)
+              commit('MUTATIONS_IS_LOADING', false)
+            }
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_IMAGE_BOT_EDIT({ commit }, params) {
         this.$axios
           .post(`https://api.openai.com/v1/images/generations`, params, {
             header: {
@@ -93,28 +117,6 @@ const createStore = () => {
           })
           .then((res) => {
             console.log(res.data)
-            // res.params = params
-            commit('MUTATIONS_IMAGE_LIST', res)
-            commit('MUTATIONS_IS_LOADING', false)
-            this.$axios
-              .get(
-                `${process.env.VUE_APP_API}?mode=aiImage`,
-                { params },
-                {
-                  header: {
-                    'Context-Type': 'multipart/form-data',
-                  },
-                }
-              )
-              .then((res) => {
-                console.log(res.data)
-                // res.params = params
-                // commit('MUTATIONS_CHAT_LIST', res)
-                // commit('MUTATIONS_IS_LOADING', false)
-              })
-              .catch((res) => {
-                console.log('AXIOS FALSE', res)
-              })
           })
           .catch((res) => {
             console.log('AXIOS FALSE', res)

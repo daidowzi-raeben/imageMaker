@@ -1,29 +1,97 @@
 <template>
     <div class="wrap">
         <div>
-            <el-input v-model="txt" type="textarea" :autosize="{ minRows: 4, maxRows: 4 }" :disabled="IS_LOADING"
-                placeholder="Please input">
+            기본 키워드 설정 (미리 설정하는 카테고리 등)
+            <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
+                v-model="txtDefault">
             </el-input>
-            <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">Primary</el-button>
         </div>
-        {{ IMAGE }}
-        <div v-if="IMAGE?.data" style="text-align: center;">
-            <img :src="IMAGE?.data?.data[0]?.url"/>
+        <div>
+            <el-select v-model="paramData.sampler" placeholder="Select">
+                <el-option v-for="item in options.sampler" :key="item" :label="item" :value="item">
+                </el-option>
+            </el-select>
+            <el-select v-model="paramData.style_preset" placeholder="Select">
+                <el-option v-for="item in options.style_preset" :key="item" :label="item" :value="item">
+                </el-option>
+            </el-select>
         </div>
+        <div>
+
+            <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="Please input" v-model="txt">
+            </el-input>
+        </div>
+        <div>
+            <div>내용의 엄격도 0 ~ 35</div>
+            <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
+        </div>
+        <div>
+            <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button>
+        </div>
+
+        <div>
+            <div v-for="(v,i) in IMAGE" :key="i">
+                <img :src="onLoadImage(v?.image)"/>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
 <script>
+
 import { mapState, mapMutations, mapActions } from 'vuex'
 
 // import imgpath from '~/static/images/logo.svg';
 
+// const fs = require('fs');
 export default {
     name: 'MainPage',
     layout: 'index',
     data() {
         return {
-            txt: 'A sunlit indoor lounge area with a pool containing a flamingo',
+            txtDefault: 'Asian, beautiful face, young, lovely',
+            txt: 'A pure looking woman with long brown hair and a white tight short-sleeved shirt',
+            openai: null,
+            cfg_scale: 7,
+            paramData: {
+                sampler: 'DDIM',
+                style_preset: '3d-model'
+            },
+            options: {
+                sampler: [
+                    'DDIM',
+                    'DDPM',
+                    'K_DPMPP_2M',
+                    'K_DPMPP_2S_ANCESTRAL',
+                    'K_DPM_2',
+                    'K_DPM_2_ANCESTRAL',
+                    'K_EULER',
+                    'K_EULER_ANCESTRAL',
+                    'K_HEUN',
+                    'K_LMS',],
+                style_preset: [
+                    '3d-model',
+                    'analog-film',
+                    'anime',
+                    'cinematic',
+                    'comic-book',
+                    'digital-art',
+                    'enhance',
+                    'fantasy-art',
+                    'isometric',
+                    'line-art',
+                    'low-poly',
+                    'modeling-compound',
+                    'neon-punk',
+                    'origami',
+                    'photographic',
+                    'pixel-art',
+                    'tile-texture'
+                ]
+
+            }
         }
     },
     head() {
@@ -39,6 +107,8 @@ export default {
 
     },
     mounted() {
+        this.ACTION_IMAGE_BOT()
+        // console.log(openai)
     },
     unmounted() {
         // document.removeEventListener('scroll', this.handlerScrollEvents);
@@ -46,18 +116,21 @@ export default {
     methods: {
         ...mapMutations(['MUTATIONS_IS_LOADING']),
         ...mapActions(['ACTION_IMAGE_BOT']),
-        onChangeIsLoad() {
-            console.log('??')
-        },
         onClickImageLoad() {
             this.MUTATIONS_IS_LOADING(true)
             const parmas = {
-                model: "dall-e-2",
-                prompt: this.txt,
-                n: 1,
-                size: "512x512"
+                sampler : this.paramData.sampler,
+                style_preset: this.paramData.style_preset,
+                text: this.txt,
+                txtDefault: this.txtDefault,
+                cfg_scale: this.cfg_scale,
+                mode: 'maker'
+                
             }
             this.ACTION_IMAGE_BOT(parmas)
+        },
+        onLoadImage(v) {
+            return process.env.VUE_APP_API.replace('/chatGpt.php','') + v.replace('./', '/')
         }
 
     }

@@ -40,7 +40,7 @@
     "nuxt": "^2.15.8",
     "nuxt-element-ui": "^1.0.10",
     "nuxt-socket-io": "^2.0.3",
-    "openai": "^4.24.1",
+    "openai": "^4.0.0",
     "read-excel-file": "^5.4.7",
     "socket.io": "^4.5.1",
     "swiper": "^4.5.1",

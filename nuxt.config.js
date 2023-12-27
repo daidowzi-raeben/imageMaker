@@ -1,9 +1,8 @@
-// import path from 'path'
 // import colors from 'vuetify/es5/util/colors'
 // import dotenv from 'dotenv'
 // import {DIR_CONFIG} from './config/dirConfig'
 // import { CONST_ENV_TYPE } from './config/envConfig'
-// import axios from 'axios'
+
 require('dotenv').config()
 
 // const instance = axios.create()
@@ -219,6 +218,11 @@ export default {
           drop_console: true,
         },
       },
+    },
+    extend(config, { isDev, isClient }) {
+      config.node = {
+        fs: 'empty',
+      }
     },
     html: {
       minify: {
