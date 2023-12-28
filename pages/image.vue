@@ -50,8 +50,8 @@
 
         <div >
             <div v-for="(v, i) in IMAGE" :key="i">
-                <div v-if="IMAGE_LOADING_QUAL" :style="`width:${paramData.width}px; height:${paramData.height}px;position:absolute;background:#000;opacity:0.7;z-index:2`"></div>
-                <img :src="onLoadImage(v?.image_thum)" />
+                <div v-if="IMAGE_LOADING_QUAL" :style="`max-width:100%;width:${paramData.width}px; height:${paramData.height}px;position:absolute;background:#000;opacity:0.7;z-index:2`"></div>
+                <img :src="onLoadImage(v?.image_thum)" style="max-width:100%; height:auto;"/>
             </div>
             <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'N'">
                 <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadQuality(IMAGE[0]?.timestamp)">해상도 보정</el-button>
