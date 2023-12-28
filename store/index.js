@@ -51,8 +51,11 @@ const createStore = () => {
       CHAT: {
         LIST: [],
       },
-      IMAGE: {},
+      IMAGE: [],
       IMAGE_LIST: [],
+      USER: {
+        user_id: '',
+      },
     },
     getters: {},
     mutations: {
@@ -77,8 +80,74 @@ const createStore = () => {
       MUTATIONS_IMAGE_QUAL(state, payload) {
         state.IMAGE_LOADING_QUAL = payload
       },
+      MUTATIONS_USER(state, payload) {
+        sessionStorage.setItem('loginId', payload.user_id)
+        state.USER = payload
+      },
     },
     actions: {
+      ACTION_LOGIN_CHECK({ commit }, params) {
+        this.$axios
+          .get(
+            `${process.env.VUE_APP_API}`,
+            { params },
+            {
+              header: {
+                'Context-Type': 'multipart/form-data',
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_USER', res.data)
+            commit('MUTATIONS_IS_LOADING', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_GOOGLE_AUTH({ commit }, params) {
+        this.$axios
+          .get(
+            `/googleApi/oauth2/v1/userinfo`,
+            { params },
+            {
+              header: {
+                'Context-Type': 'multipart/form-data',
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params`
+            const userParma = res.data
+            userParma.mode = 'login'
+            this.$axios
+              .get(
+                `${process.env.VUE_APP_API}?mode=login&id=${userParma.id}&email=${userParma.email}&name=${userParma.name}&picture=${userParma.picture}`,
+                userParma,
+                {
+                  header: {
+                    'Context-Type': 'multipart/form-data',
+                  },
+                }
+              )
+              .then((res) => {
+                console.log(res.data)
+                // res.params = params
+                commit('MUTATIONS_USER', res.data)
+                // commit('MUTATIONS_IMAGE_LOADING', false)
+                // commit('MUTATIONS_IMAGE_QUAL', false)
+              })
+              .catch((res) => {
+                console.log('AXIOS FALSE', res)
+              })
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
       ACTION_CHAT_BOT({ commit }, params) {
         this.$axios
           .post(`https://api.openai.com/v1/chat/completions`, params, {
@@ -110,9 +179,40 @@ const createStore = () => {
           .then((res) => {
             console.log(res.data)
             // res.params = params
-            commit('MUTATIONS_IMAGE_LIST', res.data)
-            commit('MUTATIONS_IMAGE_LOADING', false)
-            commit('MUTATIONS_IMAGE_QUAL', false)
+            // commit('MUTATIONS_IMAGE_LIST', res.data)
+            // commit('MUTATIONS_IMAGE_LOADING', false)
+            // commit('MUTATIONS_IMAGE_QUAL', false)
+            commit('MUTATIONS_IMAGE_LOADING', true)
+
+            commit('MUTATIONS_IS_LOADING', false)
+            params.w = 'makerImage'
+            params.mode = 'makerImage'
+            params.isNew = 'N'
+
+            params.idx = res.data[0]?.idx
+            this.$axios
+              .get(
+                `${process.env.VUE_APP_API}`,
+                { params },
+                {
+                  header: {
+                    'Context-Type': 'multipart/form-data',
+                  },
+                }
+              )
+              .then((res) => {
+                console.log(res.data)
+                // res.params = params
+                if (res?.data) {
+                  commit('MUTATIONS_IMAGE_LIST', res.data)
+                  commit('MUTATIONS_IMAGE_LOADING', false)
+                  commit('MUTATIONS_IS_LOADING', false)
+                  commit('MUTATIONS_IMAGE_QUAL', false)
+                }
+              })
+              .catch((res) => {
+                console.log('AXIOS FALSE', res)
+              })
           })
           .catch((res) => {
             console.log('AXIOS FALSE', res)

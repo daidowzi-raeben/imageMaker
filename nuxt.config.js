@@ -62,15 +62,10 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       // { src: 'https://apis.google.com/js/platform.js?onload=init' },
       {
-        src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8363464671585235',
+        src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8363464671585235',
         crossorigin: 'anonymous',
       },
 
-      // {
-      //   src: 'https://accounts.google.com/gsi/client',
-      //   async: true,
-      //   defer: true,
-      // },
       // {
       //   src: 'https://apis.google.com/js/platform.js',
       //   async: true,
@@ -116,7 +111,7 @@ export default {
     // { src: '~plugins/VClickOutside.js', ssr: false, mode: 'client' },
     { src: '~plugins/elementUI.js', ssr: false, mode: 'client' },
     { src: '~plugins/googleMaps.js', ssr: false, mode: 'client' },
-    { src: '~plugins/vue-google-oauth2.js', ssr: false, mode: 'client' },
+    // { src: '~plugins/vue-google-oauth2.js', ssr: false, mode: 'client' },
     { src: '~plugins/axios.js', ssr: false, mode: 'client' },
     { src: '~plugins/AdSense.js', ssr: false, mode: 'client' },
     // { src: '~plugins/Analytics.js', ssr: false, mode: 'client' },
@@ -186,6 +181,12 @@ export default {
       target: 'https://api.stability.ai/v2alpha/generation/image-to-video',
       secure: false,
       pathRewrite: { '^/stabilityApi': '' },
+      changeOrigin: true,
+    },
+    '/googleApi': {
+      target: 'https://www.googleapis.com/',
+      secure: false,
+      pathRewrite: { '^/googleApi': '' },
       changeOrigin: true,
     },
   },

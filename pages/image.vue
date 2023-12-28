@@ -1,5 +1,7 @@
 <template>
-    <div class="wrap">
+    <div class="warp">
+        <div>
+            Fantasy, Middle Ages, Concept Art
         <div>
             기본 키워드 설정 (미리 설정하는 카테고리 등)
             <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
@@ -34,10 +36,10 @@
             <div>내용의 엄격도 0 ~ 35</div>
             <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
         </div>
-        <div>
+        <!-- <div>
             <div>seed</div>
             <el-input placeholder="Please input" v-model="seed"></el-input>
-        </div>
+        </div> -->
         <!-- <div>
             <div>steps</div>
             <el-input placeholder="Please input" v-model="steps"></el-input>
@@ -53,13 +55,15 @@
             </div>
             <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'N'">
                 <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadQuality(IMAGE[0]?.timestamp)">해상도 보정</el-button>
+                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep(IMAGE[0]?.timestamp)">퀄리티 보정</el-button>
+                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button>
             </div>
             <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'Y'">
                 <!-- 보정할 프롬퍼티
                  <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
                     v-model="textQual">
                 </el-input> -->
-                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep(IMAGE[0]?.timestamp)">퀄리티 보정</el-button>
+                <!-- <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button> -->
             </div>
         </div>
         <div v-if="IMAGE_LOADING">
@@ -70,7 +74,7 @@
             </el-skeleton>
         </div>
 
-
+    </div>
     </div>
 </template>
 
@@ -139,7 +143,7 @@ export default {
                     "1216x832",
                     "1344x768",
                     "1536x640",
-                    "640x1536",
+                    // "640x1536",
                     "768x1344",
                     "832x1216",
                     "896x1152",
@@ -169,7 +173,7 @@ export default {
         // document.removeEventListener('scroll', this.handlerScrollEvents);
     },
     methods: {
-        ...mapMutations(['MUTATIONS_IS_LOADING','MUTATIONS_IMAGE_QUAL',]),
+        ...mapMutations(['MUTATIONS_IS_LOADING','MUTATIONS_IMAGE_QUAL','MUTATIONS_IMAGE_LIST']),
         ...mapActions(['ACTION_IMAGE_BOT','ACTION_IMAGE_QUALITY','ACTION_IMAGE_QUALITY_STEP']),
         onClickImageLoadQuality(v, m) {
             const parmas = {
@@ -181,11 +185,36 @@ export default {
             this.ACTION_IMAGE_QUALITY(parmas)
         },
         onClickImageLoadStep(v, m) {
+            // const parmas = {
+            //     mode: 'step',
+            //     timestamp: v,
+            //     stepType: '50',
+            //     frontTime: Date.now()
+            // }
             const parmas = {
-                mode: 'step',
+                mode: 'makerImageSeed',
                 timestamp: v,
                 stepType: '50',
+                steps: '50',
+                hd: this.paramData.hd,
+                frontTime: Date.now()
             }
+            this.MUTATIONS_IMAGE_LIST([])
+            this.MUTATIONS_IS_LOADING(true)
+            this.MUTATIONS_IMAGE_QUAL(true)
+            this.ACTION_IMAGE_QUALITY_STEP(parmas)
+        },
+        onClickImageLoadStep2(v, m) {
+            const parmas = {
+                mode: 'makerImageSeed',
+                 isSeed:'Y',
+                timestamp: v,
+                stepType: '30',
+                steps: '30',
+                hd: this.paramData.hd,
+                frontTime: Date.now()
+            }
+            this.MUTATIONS_IMAGE_LIST([])
             this.MUTATIONS_IS_LOADING(true)
             this.MUTATIONS_IMAGE_QUAL(true)
             this.ACTION_IMAGE_QUALITY_STEP(parmas)
