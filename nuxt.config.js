@@ -182,10 +182,10 @@ export default {
     },
   },
   proxy: {
-    '/google': {
-      target: 'https://maps.googleapis.com/',
+    '/stabilityApi': {
+      target: 'https://api.stability.ai/v2alpha/generation/image-to-video',
       secure: false,
-      pathRewrite: { '^/google': '' },
+      pathRewrite: { '^/stabilityApi': '' },
       changeOrigin: true,
     },
   },

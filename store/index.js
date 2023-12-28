@@ -46,6 +46,8 @@ const createStore = () => {
   return new Store({
     state: {
       IS_LOADING: false,
+      IMAGE_LOADING: false,
+      IMAGE_LOADING_QUAL: false,
       CHAT: {
         LIST: [],
       },
@@ -69,6 +71,12 @@ const createStore = () => {
       MUTATIONS_IMAGE_LIST_ARRAY(state, payload) {
         state.IMAGE_LIST = payload
       },
+      MUTATIONS_IMAGE_LOADING(state, payload) {
+        state.IMAGE_LOADING = payload
+      },
+      MUTATIONS_IMAGE_QUAL(state, payload) {
+        state.IMAGE_LOADING_QUAL = payload
+      },
     },
     actions: {
       ACTION_CHAT_BOT({ commit }, params) {
@@ -83,6 +91,50 @@ const createStore = () => {
             // res.params = params
             commit('MUTATIONS_CHAT_LIST', res)
             commit('MUTATIONS_IS_LOADING', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_IMAGE_QUALITY_STEP({ commit }, params) {
+        this.$axios
+          .get(
+            `${process.env.VUE_APP_API}`,
+            { params },
+            {
+              header: {
+                'Context-Type': 'multipart/form-data',
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_IMAGE_LIST', res.data)
+            commit('MUTATIONS_IMAGE_LOADING', false)
+            commit('MUTATIONS_IMAGE_QUAL', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_IMAGE_QUALITY({ commit }, params) {
+        this.$axios
+          .get(
+            `${process.env.VUE_APP_API}`,
+            { params },
+            {
+              header: {
+                'Context-Type': 'multipart/form-data',
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_IMAGE_LIST', res.data)
+            commit('MUTATIONS_IMAGE_LOADING', false)
+            commit('MUTATIONS_IMAGE_QUAL', false)
           })
           .catch((res) => {
             console.log('AXIOS FALSE', res)
@@ -104,8 +156,35 @@ const createStore = () => {
             console.log(res.data)
             // res.params = params
             if (res?.data) {
-              commit('MUTATIONS_IMAGE_LIST', res.data)
+              // commit('MUTATIONS_IMAGE_LIST', res.data)
+              commit('MUTATIONS_IMAGE_LOADING', true)
+
               commit('MUTATIONS_IS_LOADING', false)
+              params.w = 'makerImage'
+              params.mode = 'makerImage'
+              params.idx = res.data[0]?.idx
+              this.$axios
+                .get(
+                  `${process.env.VUE_APP_API}`,
+                  { params },
+                  {
+                    header: {
+                      'Context-Type': 'multipart/form-data',
+                    },
+                  }
+                )
+                .then((res) => {
+                  console.log(res.data)
+                  // res.params = params
+                  if (res?.data) {
+                    commit('MUTATIONS_IMAGE_LIST', res.data)
+                    commit('MUTATIONS_IMAGE_LOADING', false)
+                    // commit('MUTATIONS_IS_LOADING', false)
+                  }
+                })
+                .catch((res) => {
+                  console.log('AXIOS FALSE', res)
+                })
             }
           })
           .catch((res) => {
