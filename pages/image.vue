@@ -2,79 +2,87 @@
     <div class="warp">
         <div>
             Fantasy, Middle Ages, Concept Art
-        <div>
-            기본 키워드 설정 (미리 설정하는 카테고리 등)
-            <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
-                v-model="txtDefault">
-            </el-input>
-        </div>
-        <div>
-            <el-select v-model="paramData.sampler" placeholder="Select">
-                <el-option v-for="item in options.sampler" :key="item" :label="item" :value="item">
-                </el-option>
-            </el-select>
-            <el-select v-model="paramData.style_preset" placeholder="Select">
-                <el-option v-for="item in options.style_preset" :key="item" :label="item" :value="item">
-                </el-option>
-            </el-select>
-            <el-select v-model="paramData.hd" placeholder="Select">
-                <el-option v-for="item in options.hd" :key="item" :label="item" :value="item">
-                </el-option>
-            </el-select>
-        </div>
-        <div>
+            <div>
+                기본 키워드 설정 (미리 설정하는 카테고리 등)
+                <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
+                    v-model="txtDefault">
+                </el-input>
+            </div>
+            <div>
+                <el-select v-model="paramData.sampler" placeholder="Select">
+                    <el-option v-for="item in options.sampler" :key="item" :label="item" :value="item">
+                    </el-option>
+                </el-select>
+                <el-select v-model="paramData.style_preset" placeholder="Select">
+                    <el-option v-for="item in options.style_preset" :key="item" :label="item" :value="item">
+                    </el-option>
+                </el-select>
+                <el-select v-model="paramData.hd" placeholder="Select">
+                    <el-option v-for="item in options.hd" :key="item" :label="item" :value="item">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
 
-            <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="Please input" v-model="txt">
-            </el-input>
-        </div>
-        <div>
+                <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="Please input" v-model="txt">
+                </el-input>
+            </div>
+            <div>
 
-            <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="제외키워드" v-model="textNot">
-            </el-input>
-        </div>
-        <div>
-            <div>내용의 엄격도 0 ~ 35</div>
-            <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
-        </div>
-        <!-- <div>
+                <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 6 }" placeholder="제외키워드" v-model="textNot">
+                </el-input>
+            </div>
+            <div>
+                <div>내용의 엄격도 0 ~ 35</div>
+                <el-input placeholder="Please input" v-model="cfg_scale"></el-input>
+            </div>
+            <div>
             <div>seed</div>
             <el-input placeholder="Please input" v-model="seed"></el-input>
-        </div> -->
-        <!-- <div>
+        </div>
+            <div>
             <div>steps</div>
             <el-input placeholder="Please input" v-model="steps"></el-input>
-        </div> -->
-        <div>
-            <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button>
         </div>
+            <div>
+                <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button>
+            </div>
 
-        <div >
-            <div v-for="(v, i) in IMAGE" :key="i">
-                <div v-if="IMAGE_LOADING_QUAL" :style="`max-width:100%;width:${paramData.width}px; height:${paramData.height}px;position:absolute;background:#000;opacity:0.7;z-index:2`"></div>
-                <img :src="onLoadImage(v?.image_thum)" style="max-width:100%; height:auto;"/>
-            </div>
-            <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'N'">
-                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadQuality(IMAGE[0]?.timestamp)">해상도 보정</el-button>
-                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep(IMAGE[0]?.timestamp)">퀄리티 보정</el-button>
-                <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button>
-            </div>
-            <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'Y'">
-                <!-- 보정할 프롬퍼티
+            <div>
+                <div v-for="(v, i) in IMAGE" :key="i">
+                    <div v-if="v?.result_name">
+                        {{ v?.result_name }}</div>
+                    <div v-if="IMAGE_LOADING_QUAL"
+                        :style="`max-width:100%;width:${paramData.width}px; height:${paramData.height}px;position:absolute;background:#000;opacity:0.7;z-index:2`">
+                    </div>
+                    <img :src="onLoadImage(v?.image_thum)" style="max-width:100%; height:auto;" />
+                </div>
+                <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'N'">
+                    <el-button type="primary" :disabled="IMAGE_LOADING_QUAL"
+                        @click="onClickImageLoadQuality(IMAGE[0]?.timestamp)">해상도 보정</el-button>
+                    <el-button type="primary" :disabled="IMAGE_LOADING_QUAL"
+                        @click="onClickImageLoadStep(IMAGE[0]?.timestamp)">퀄리티 보정</el-button>
+                    <el-button type="primary" :disabled="IMAGE_LOADING_QUAL"
+                        @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button>
+                </div>
+                <div v-if="IMAGE && IMAGE.length > 0 && IMAGE[0]?.isQual === 'Y'">
+                    <!-- 보정할 프롬퍼티
                  <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="Please input"
                     v-model="textQual">
                 </el-input> -->
-                <!-- <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button> -->
+                    <!-- <el-button type="primary" :disabled="IMAGE_LOADING_QUAL" @click="onClickImageLoadStep2(IMAGE[0]?.timestamp)">이미지 변형</el-button> -->
+                </div>
             </div>
-        </div>
-        <div v-if="IMAGE_LOADING">
-            <el-skeleton :loading="loading" animated>
-                <template slot="template">
-                    <el-skeleton-item variant="image" :style="`width:${paramData.width}px; height:${paramData.height}px`" />
-                </template>
-            </el-skeleton>
-        </div>
+            <div v-if="IMAGE_LOADING">
+                <el-skeleton :loading="loading" animated>
+                    <template slot="template">
+                        <el-skeleton-item variant="image"
+                            :style="`width:${paramData.width}px; height:${paramData.height}px`" />
+                    </template>
+                </el-skeleton>
+            </div>
 
-    </div>
+        </div>
     </div>
 </template>
 
@@ -158,7 +166,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['IMAGE', 'IS_LOADING', 'IMAGE_LOADING','IMAGE_LOADING_QUAL']),
+        ...mapState(['IMAGE', 'IS_LOADING', 'IMAGE_LOADING', 'IMAGE_LOADING_QUAL']),
     },
     created() {
 
@@ -173,8 +181,8 @@ export default {
         // document.removeEventListener('scroll', this.handlerScrollEvents);
     },
     methods: {
-        ...mapMutations(['MUTATIONS_IS_LOADING','MUTATIONS_IMAGE_QUAL','MUTATIONS_IMAGE_LIST']),
-        ...mapActions(['ACTION_IMAGE_BOT','ACTION_IMAGE_QUALITY','ACTION_IMAGE_QUALITY_STEP']),
+        ...mapMutations(['MUTATIONS_IS_LOADING', 'MUTATIONS_IMAGE_QUAL', 'MUTATIONS_IMAGE_LIST']),
+        ...mapActions(['ACTION_IMAGE_BOT', 'ACTION_IMAGE_QUALITY', 'ACTION_IMAGE_QUALITY_STEP']),
         onClickImageLoadQuality(v, m) {
             const parmas = {
                 mode: 'quality',
@@ -207,7 +215,7 @@ export default {
         onClickImageLoadStep2(v, m) {
             const parmas = {
                 mode: 'makerImageSeed',
-                 isSeed:'Y',
+                isSeed: 'Y',
                 timestamp: v,
                 stepType: '30',
                 steps: '30',
@@ -243,8 +251,8 @@ export default {
             if (v) return process.env.VUE_APP_API.replace('/chatGpt.php', '') + v.replace('./', '/')
         },
         onLoadMotion() {
-       
-    }
+
+        }
 
     }
 }
