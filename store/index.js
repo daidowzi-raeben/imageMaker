@@ -56,6 +56,42 @@ const createStore = () => {
       USER: {
         user_id: '',
       },
+      SD: {
+        IMAGE: {},
+        LIST: {},
+        SAVE_LIST: {},
+      },
+      imageOptions: {
+        seed: 0,
+        clip_skip: 2,
+        step: 20,
+        scale: 7.5,
+        width: 512,
+        height: 512,
+        samples: 1,
+        lora_model: '',
+        embeddings_model: '',
+        lora_strength: '',
+        prompt:
+          'A pure looking woman with long brown hair and a white tight short-sleeved shirt',
+        negative_prompt: '',
+        model_id: 'darksushimixv225',
+        safety_checker: false,
+        schedulerVal: 'DPMSolverMultistepScheduler',
+        scheduler: [
+          'DDPMScheduler',
+          'PNDMScheduler',
+          'EulerAncestralDiscreteScheduler',
+          'DDIMScheduler',
+          'LMSDiscreteScheduler',
+          'EulerDiscreteScheduler',
+          'DPMSolverMultistepScheduler',
+          'HeunDiscreteScheduler',
+          'UniPCMultistepScheduler',
+          'DPMSolverSinglestepScheduler',
+          'LCMScheduler',
+        ],
+      },
     },
     getters: {},
     mutations: {
@@ -84,8 +120,70 @@ const createStore = () => {
         sessionStorage.setItem('loginId', payload.user_id)
         state.USER = payload
       },
+      MUTATIONS_SD_IMAGE_MAKER(state, payload) {
+        state.SD.IMAGE = null
+        state.SD.IMAGE = payload
+      },
+      MUTATIONS_SD_IMAGE_MAKER_RELOAD(state, payload) {
+        state.SD.LIST = payload
+      },
+      MUTATIONS_SD_IMAGE_MAKER_SAVE(state, payload) {
+        state.SD.SAVE_LIST = payload
+      },
     },
     actions: {
+      ACTION_SD_IMAGE_MAKER({ commit }, params) {
+        this.$axios
+          .post(`${process.env.VUE_APP_API}`, params, {
+            header: {
+              'Context-Type': 'multipart/form-data',
+            },
+          })
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_SD_IMAGE_MAKER', res.data)
+            commit('MUTATIONS_IS_LOADING', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+
+      ACTION_SD_IMAGE_MAKER_RELOAD({ commit }, params) {
+        this.$axios
+          .post(`${process.env.VUE_APP_API}`, params, {
+            header: {
+              'Context-Type': 'multipart/form-data',
+            },
+          })
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            commit('MUTATIONS_SD_IMAGE_MAKER_RELOAD', res.data)
+
+            commit('MUTATIONS_IS_LOADING', false)
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
+      ACTION_SD_IMAGE_MAKER_SAVE({ commit }, params) {
+        this.$axios
+          .post(`${process.env.VUE_APP_API}`, params, {
+            header: {
+              'Context-Type': 'multipart/form-data',
+            },
+          })
+          .then((res) => {
+            console.log(res.data)
+            // res.params = params
+            alert('저장완료')
+          })
+          .catch((res) => {
+            console.log('AXIOS FALSE', res)
+          })
+      },
       ACTION_LOGIN_CHECK({ commit }, params) {
         this.$axios
           .get(
