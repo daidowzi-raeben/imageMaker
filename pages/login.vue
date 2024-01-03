@@ -29,7 +29,7 @@ export default {
         'USER.user_id': {
             handler(value) {
                 if (value) {
-                    return this.$router.push('/')
+                    return this.$router.push('/maker/image')
                 }
             }
         }

@@ -40,6 +40,7 @@ export default {
 
   },
   mounted() {
+    console.log('process.env.VUE_APP_LOCAL ', process.env.VUE_APP_LOCAL)
   },
   unmounted() {
     // document.removeEventListener('scroll', this.handlerScrollEvents);

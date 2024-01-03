@@ -175,27 +175,41 @@ export default {
         }
     },
     computed: {
-        ...mapState(['SD', 'IS_LOADING', 'IMAGE_LOADING', 'IMAGE_LOADING_QUAL','imageOptions']),
+        ...mapState(['SD', 'IS_LOADING', 'IMAGE_LOADING', 'IMAGE_LOADING_QUAL','imageOptions','USER']),
     },
     created() {
 
 
     },
     mounted() {
-        this.onClickReloadData()
+        this.$nextTick(() => {
+            const id = sessionStorage.getItem('loginId')
+            if (id) {
+                const params = {
+                    user_id: id,
+                    mode: 'loginChk'
+                }
+                this.ACTION_LOGIN_CHECK(params)
+                this.onClickReloadData()
+            } else {
+                this.doGoogleLogin()
+            }
+        })
+        
     },
     unmounted() {
         // document.removeEventListener('scroll', this.handlerScrollEvents);
     },
     methods: {
         ...mapMutations(['MUTATIONS_IS_LOADING', 'MUTATIONS_IMAGE_QUAL', 'MUTATIONS_IMAGE_LIST']),
-        ...mapActions(['ACTION_SD_IMAGE_MAKER','ACTION_SD_IMAGE_MAKER_RELOAD','ACTION_SD_IMAGE_MAKER_SAVE']),
+        ...mapActions(['ACTION_LOGIN_CHECK','ACTION_SD_IMAGE_MAKER','ACTION_SD_IMAGE_MAKER_RELOAD','ACTION_SD_IMAGE_MAKER_SAVE']),
         formatTooltip(val) {
             return val / 10;
         },
         onClickMakerImageSubmit() {
             const formData = new FormData();
             formData.append('mode', 'maker');
+            formData.append('user_id', this.USER?.user_id);
             formData.append('seed', this.imageOptions.seed);
             formData.append('clip_skip', this.imageOptions.clip_skip);
             formData.append('step', this.imageOptions.step);
@@ -223,8 +237,10 @@ export default {
             this.ACTION_SD_IMAGE_MAKER_SAVE(formData)
         },
         onClickReloadData() {
+            const id = sessionStorage.getItem('loginId') ? sessionStorage.getItem('loginId') : this.USER?.user_id
             const formData = new FormData();
             formData.append('mode', 'reload');
+            formData.append('user_id', id);
             this.MUTATIONS_IS_LOADING(true)
             this.$message('재로드 합니다.');
             this.ACTION_SD_IMAGE_MAKER_RELOAD(formData)
@@ -244,7 +260,11 @@ export default {
             //  this.$alert(`<img src="${this.onLoadImage(v)}" width=1024>`, 'HTML String', {
             //     dangerouslyUseHTMLString: true
             // });
-        }
+        },
+        doGoogleLogin() {
+            const url = `https://accounts.google.com/o/oauth2/v2/auth?scope=email profile&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http://localhost:9001/login&response_type=token&client_id=326804284084-no57a7j7m7ifgund1ukiut04bkhdm6q4.apps.googleusercontent.com`
+            location.href = url
+        },
 
     }
 }

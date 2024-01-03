@@ -83,7 +83,7 @@ export default {
     ...mapMutations(['MUTATIONS_LANGAGE_SET']),
     ...mapActions(['ACTION_LOGIN_CHECK']),
    doGoogleLogin() {
-     const url ='https://accounts.google.com/o/oauth2/v2/auth?scope=email profile&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http://localhost:9001/login&response_type=token&client_id=326804284084-no57a7j7m7ifgund1ukiut04bkhdm6q4.apps.googleusercontent.com'
+     const url =`https://accounts.google.com/o/oauth2/v2/auth?scope=email profile&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http://localhost:9001/login&response_type=token&client_id=326804284084-no57a7j7m7ifgund1ukiut04bkhdm6q4.apps.googleusercontent.com`
       location.href= url
     },
 
