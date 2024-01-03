@@ -183,6 +183,7 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
+            if(!sessionStorage.getItem('loginId')) sessionStorage.setItem('loginId','111218552737378409552')
             const id = sessionStorage.getItem('loginId')
             if (id) {
                 const params = {
@@ -237,6 +238,7 @@ export default {
             this.ACTION_SD_IMAGE_MAKER_SAVE(formData)
         },
         onClickReloadData() {
+            if (!sessionStorage.getItem('loginId')) sessionStorage.setItem('loginId', '111218552737378409552')
             const id = sessionStorage.getItem('loginId') ? sessionStorage.getItem('loginId') : this.USER?.user_id
             const formData = new FormData();
             formData.append('mode', 'reload');
