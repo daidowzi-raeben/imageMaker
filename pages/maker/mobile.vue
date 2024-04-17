@@ -1,113 +1,49 @@
 <template>
   <div class="warp maky">
     <!-- <div v-if="IS_LOADING" style="position:fixed;width:100%; height:100%; background:#000; opacity: 0.7; top:0; left:0; z-index:9999;"></div> -->
-    <div class="maky-header">
-      <span
-        v-if="SD.IMAGE && SD.IMAGE?.metaData && SD.IMAGE?.metaData.length > 0"
-      >
-        model : {{ SD.IMAGE?.metaData[0]?.model_id }} / lora :
-        {{ SD.IMAGE?.metaData[0]?.lora_model }} / lora_strength :
-        {{ SD.IMAGE?.metaData[0]?.lora_strength }} / image_id :
-        {{ SD.IMAGE?.metaData[0]?.image_id }} / Guidiance Scale :
-        {{ SD.IMAGE?.metaData[0]?.guidance_scale }} Scheduler :
-        {{ SD.IMAGE?.metaData[0]?.scheduler }}
-      </span>
-    </div>
-    <div style="padding: 20px; margin-left: 600px">
-      <template
-        v-if="SD.IMAGE && SD.IMAGE?.metaData && SD.IMAGE?.metaData.length > 0"
-      >
-        <div
-          v-for="(v, i) in SD.IMAGE?.metaData"
-          :key="i"
-          style="margin-bottom: 20px"
-        >
-          <template v-if="v.image_link && v.image_link.length > 0">
-            <div style="margin-bottom: 10px">
-              이미지 {{ i + 1 }}
-              <el-button type="warning" @click="onClickImageSave"
-                >SAVE</el-button
-              >
-            </div>
-            <img
-              :src="onLoadImage(v.image_link)"
-              :onerror="`this.src='https://pub-3626123a908346a7a8be8d9295f44e26.r2.dev/generations/0-11653a82-975d-4d4c-a135-f9f9940c2973.png';`"
-              width="70%"
-            />
-          </template>
-          <template v-else>
-            <div style="margin-bottom: 10px">
-              이미지 로드 중
-              <el-button type="warning" @click="onClickReloadData"
-                >Reload</el-button
-              >
-            </div>
-            <el-skeleton-item
-              v-loading="IS_LOADING"
-              variant="image"
-              :style="`width: ${imageOptions.width}px; height: ${imageOptions.height}px; border:1px solid #eee;`"
-            />
-          </template>
-        </div>
-      </template>
-      <template v-else>
-        <div
-          v-for="item in imageOptions.samples"
-          :key="item"
-          style="margin-bottom: 20px"
-        >
-          <div style="margin-bottom: 10px">이미지 {{ item }}</div>
-          <el-skeleton-item
-            v-loading="IS_LOADING"
-            variant="image"
-            :style="`width: ${imageOptions.width}px; height: ${imageOptions.height}px; border:1px solid #eee;`"
-          />
-        </div>
-      </template>
-    </div>
     <div class="maky-left">
       <div>
         <div class="block">남은 API : 1,000</div>
         <div class="block" style="margin-top: 20px">
           <span class="demonstration" :format-tooltip="formatTooltip"
-            >Guidiance Scale {{ imageOptions.scale }}</span
+            >Guidiance Scale {{ imageOptions2.scale }}</span
           >
           <el-slider
-            v-model="imageOptions.scale"
+            v-model="imageOptions2.scale"
             :format-tooltip="formatTooltip"
             :max="40"
           ></el-slider>
         </div>
         <div class="block">
           <span class="demonstration"
-            >Clip Skip : {{ imageOptions.clip_skip }}</span
+            >Clip Skip : {{ imageOptions2.clip_skip }}</span
           >
           <el-slider
-            v-model="imageOptions.clip_skip"
+            v-model="imageOptions2.clip_skip"
             :min="1"
             :max="5"
           ></el-slider>
         </div>
         <div class="block">
-          <span class="demonstration">Seed : {{ imageOptions.seed }}</span>
+          <span class="demonstration">Seed : {{ imageOptions2.seed }}</span>
           <el-slider
-            v-model="imageOptions.seed"
+            v-model="imageOptions2.seed"
             :min="0"
             :max="999999"
           ></el-slider>
         </div>
         <div class="block">
-          <span class="demonstration">Steps : {{ imageOptions.step }}</span>
+          <span class="demonstration">Steps : {{ imageOptions2.step }}</span>
           <el-slider
-            v-model="imageOptions.step"
+            v-model="imageOptions2.step"
             :min="11"
             :max="50"
           ></el-slider>
         </div>
         <div class="block">
-          <span class="demonstration">Width : {{ imageOptions.width }}px</span>
+          <span class="demonstration">Width : {{ imageOptions2.width }}px</span>
           <el-slider
-            v-model="imageOptions.width"
+            v-model="imageOptions2.width"
             :step="8"
             :min="512"
             :max="1920"
@@ -115,10 +51,10 @@
         </div>
         <div class="block">
           <span class="demonstration"
-            >Height : {{ imageOptions.height }}px</span
+            >Height : {{ imageOptions2.height }}px</span
           >
           <el-slider
-            v-model="imageOptions.height"
+            v-model="imageOptions2.height"
             :step="8"
             :min="512"
             :max="1920"
@@ -126,10 +62,10 @@
         </div>
         <div class="block">
           <span class="demonstration"
-            >Samples : {{ imageOptions.samples }}개</span
+            >Samples : {{ imageOptions2.samples }}개</span
           >
           <el-slider
-            v-model="imageOptions.samples"
+            v-model="imageOptions2.samples"
             :min="1"
             :max="3"
           ></el-slider>
@@ -137,12 +73,12 @@
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Scheduler</div>
           <el-select
-            v-model="imageOptions.schedulerVal"
+            v-model="imageOptions2.schedulerVal"
             placeholder="Select"
             style="width: 100%"
           >
             <el-option
-              v-for="(v, i) in imageOptions.scheduler"
+              v-for="(v, i) in imageOptions2.scheduler"
               :key="i"
               :label="v"
               :value="v"
@@ -153,35 +89,35 @@
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Model ID</div>
           <el-input
-            v-model="imageOptions.model_id"
+            v-model="imageOptions2.model_id"
             placeholder="Please input"
           ></el-input>
         </div>
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Lora</div>
           <el-input
-            v-model="imageOptions.lora_model"
+            v-model="imageOptions2.lora_model"
             placeholder="Please input"
           ></el-input>
         </div>
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Lora Strength</div>
           <el-input
-            v-model="imageOptions.lora_strength"
+            v-model="imageOptions2.lora_strength"
             placeholder="Please input"
           ></el-input>
         </div>
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Embeddings Model</div>
           <el-input
-            v-model="imageOptions.embeddings_model"
+            v-model="imageOptions2.embeddings_model"
             placeholder="Please input"
           ></el-input>
         </div>
         <div class="block" style="margin-top: 20px">
           <div class="demonstration">Seed</div>
           <el-input
-            v-model="imageOptions.seed"
+            v-model="imageOptions2.seed"
             placeholder="Please input"
           ></el-input>
         </div>
@@ -192,10 +128,11 @@
         <!-- <el-button type="primary" :disabled="IS_LOADING" @click="onClickImageLoad">만들기</el-button> -->
       </div>
     </div>
+
     <div class="maky-content">
       <div class="block">
         <el-switch
-          v-model="imageOptions.safety_checker"
+          v-model="imageOptions2.safety_checker"
           active-text="Safety Checker"
         >
         </el-switch>
@@ -203,7 +140,7 @@
       <div class="block" style="margin-top: 20px">
         <div class="demonstration" style="margin-bottom: 5px">Prompt</div>
         <el-input
-          v-model="imageOptions.prompt"
+          v-model="imageOptions2.prompt"
           type="textarea"
           :autosize="{ minRows: 10, maxRows: 10 }"
           placeholder="Please input"
@@ -215,7 +152,7 @@
           Negative Prompt
         </div>
         <el-input
-          v-model="imageOptions.negative_prompt"
+          v-model="imageOptions2.negative_prompt"
           type="textarea"
           :autosize="{ minRows: 10, maxRows: 10 }"
           placeholder="Please input"
@@ -291,7 +228,7 @@ export default {
       'IS_LOADING',
       'IMAGE_LOADING',
       'IMAGE_LOADING_QUAL',
-      'imageOptions',
+      'imageOptions2',
       'USER',
     ]),
   },
@@ -299,8 +236,9 @@ export default {
   mounted() {
     this.$nextTick(() => {
       if (!sessionStorage.getItem('loginId'))
-        sessionStorage.setItem('loginId', '111218552737378409552')
-      const id = sessionStorage.getItem('loginId')
+        sessionStorage.setItem('loginId', '114340112481189890320')
+      //   const id = sessionStorage.getItem('loginId')
+      const id = '114340112481189890320'
       if (id) {
         const params = {
           user_id: id,
@@ -335,24 +273,24 @@ export default {
       const formData = new FormData()
       formData.append('mode', 'maker')
       formData.append('user_id', this.USER?.user_id)
-      formData.append('seed', this.imageOptions.seed)
-      formData.append('clip_skip', this.imageOptions.clip_skip)
-      formData.append('step', this.imageOptions.step)
-      formData.append('scale', this.imageOptions.scale)
-      formData.append('width', this.imageOptions.width)
-      formData.append('height', this.imageOptions.height)
-      formData.append('samples', this.imageOptions.samples)
-      formData.append('lora_model', this.imageOptions.lora_model)
-      formData.append('lora_strength', this.imageOptions.lora_strength)
-      formData.append('prompt', this.imageOptions.prompt)
-      formData.append('negative_prompt', this.imageOptions.negative_prompt)
-      formData.append('embeddings_model', this.imageOptions.embeddings_model)
-      formData.append('model_id', this.imageOptions.model_id)
+      formData.append('seed', this.imageOptions2.seed)
+      formData.append('clip_skip', this.imageOptions2.clip_skip)
+      formData.append('step', this.imageOptions2.step)
+      formData.append('scale', this.imageOptions2.scale)
+      formData.append('width', this.imageOptions2.width)
+      formData.append('height', this.imageOptions2.height)
+      formData.append('samples', this.imageOptions2.samples)
+      formData.append('lora_model', this.imageOptions2.lora_model)
+      formData.append('lora_strength', this.imageOptions2.lora_strength)
+      formData.append('prompt', this.imageOptions2.prompt)
+      formData.append('negative_prompt', this.imageOptions2.negative_prompt)
+      formData.append('embeddings_model', this.imageOptions2.embeddings_model)
+      formData.append('model_id', this.imageOptions2.model_id)
       formData.append(
         'safety_checker',
-        this.imageOptions.safety_checker === true ? 'yes' : 'no'
+        this.imageOptions2.safety_checker === true ? 'yes' : 'no'
       )
-      formData.append('schedulerVal', this.imageOptions.schedulerVal)
+      formData.append('schedulerVal', this.imageOptions2.schedulerVal)
       this.MUTATIONS_IS_LOADING(true)
       this.$message('이미지를 만드는 중입니다.')
       this.ACTION_SD_IMAGE_MAKER(formData)
@@ -406,33 +344,22 @@ html {
 }
 .maky {
   &-left {
-    position: fixed;
-    width: 300px;
-    height: 100%;
+    width: 100%;
     background: #354052;
-    top: 0;
-    left: 0;
-    padding: 20px;
+    padding: 10px;
     color: #929daf;
   }
 
   &-content {
-    position: fixed;
-    width: 300px;
+    width: 100%;
     height: 100%;
     background: #edf2f6;
-    top: 0;
-    left: 300px;
-    padding: 20px;
+    padding: 10px;
   }
 
   &-history {
-    position: fixed;
-    width: 300px;
-    height: 100%;
+    width: 100%;
     background: #354052;
-    top: 0;
-    right: 0;
     padding: 10px;
     color: #929daf;
   }
