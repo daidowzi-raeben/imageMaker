@@ -188,17 +188,15 @@
           :key="i"
           style="margin-bottom: 20px"
         >
-          <el-carousel :interval="5000" arrow="always">
-            <el-carousel-item v-for="(z, x) in v" :key="x">
-              <!-- <h3>{{ x }}</h3> -->
-              <img
-                v-if="z.image_link"
-                :src="onLoadImage(z.image_link)"
-                width="100%"
-                @click="onClickLoadImage(z.image_id)"
-              />
-            </el-carousel-item>
-          </el-carousel>
+          <div v-for="(z, x) in v" :key="x">
+            <!-- <h3>{{ x }}</h3> -->
+            <img
+              v-if="z.image_link"
+              :src="onLoadImage(z.image_link)"
+              width="100%"
+              @click="onClickLoadImage(z.image_id)"
+            />
+          </div>
         </div>
       </div>
     </div>
