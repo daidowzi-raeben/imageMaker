@@ -188,12 +188,12 @@
           :key="i"
           style="margin-bottom: 20px"
         >
-          <div v-for="(z, x) in v" :key="x">
+          <div v-for="(z, x) in v" :key="x" style="text-align: center">
             <!-- <h3>{{ x }}</h3> -->
             <img
               v-if="z.image_link"
               :src="onLoadImage(z.image_link)"
-              width="100%"
+              width="95%"
               @click="onClickLoadImage(z.image_id)"
             />
           </div>
